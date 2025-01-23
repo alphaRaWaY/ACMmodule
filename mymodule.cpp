@@ -1,10 +1,8 @@
 #include <bits/stdc++.h>
 using namespace std;
+using pii=pair<int,int>;
 #define int long long
 #define endl '\n'
-#define f first
-#define s second
-#define pb push_back
 #define inc(i, a, b) for (int i(a); i <= b; i++)
 #define dec(i, a, b) for (int i(a); i >= b; i--)
 #define ALL(x) x.begin(), x.end()
