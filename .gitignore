@@ -1,0 +1,4 @@
+*.exe
+output/
+.h
+.vscode
