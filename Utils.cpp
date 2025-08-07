@@ -106,7 +106,12 @@ namespace HullUtil
         double x,y;
         // 向量内积
         double operator* (Vector v){
-            return x*v.x-y*v.y;
+            return x*v.x+y*v.y;
+        }
+        // 获得垂直向量
+        Vector getVertical()
+        {
+            return {y,-x};
         }
     };
     // 定义点
@@ -142,7 +147,23 @@ namespace HullUtil
         // 获取线和点之间的距离
         double getDist(Point a){return fabsl(intersection(p-a,v))/abs(v);}
     };
+    // 直线交点
+    Point getIntersection(Line line1,Line line2)
+    {
+        double cross_product = intersection(line1.v, line2.v);
+        // 直线平行
+        if (fabsl(cross_product) < HULL_UTIL_EPS) {
+            return {NAN, NAN};
+        }
 
+        Vector v_diff = line2.p-line1.p;
+        double t_numerator = intersection(v_diff, line2.v);
+        double t = t_numerator / cross_product;
+        Point intersection_point;
+        intersection_point.x = line1.p.x + t * line1.v.x;
+        intersection_point.y = line1.p.y + t * line1.v.y;
+        return intersection_point;
+    }
     // 两点之间求直线
     Line getLine(Point p1,Point p2){return {p1,p2-p1};}
 
