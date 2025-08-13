@@ -267,7 +267,7 @@ namespace arithmetical{
         invFac.assign(n+5,1);
         inc(i,2,n)fac[i]=fac[i-1]*i%p;
         invFac[n]=getInv(fac[n],p);
-        dec(i,n-1,1)invFac[i]=fac[i+1]*i%p;
+        dec(i,n-1,1)invFac[i]=invFac[i+1]*(i+1)%p;
     }
     /**
      * 组合数
