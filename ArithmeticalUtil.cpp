@@ -7,7 +7,7 @@ using namespace std;
 #define inc(i,a,b) for(int i(a);i<=b;i++)
 #define dec(i,a,b) for(int i(a);i>=b;i--)
 // 方便本地调试的板子
-// #define LOCAL
+#define LOCAL
 #ifdef LOCAL
 ostream &operator<< (ostream & o,const pair<int,int> a)
 {
@@ -32,8 +32,15 @@ inc(i,l,ll){inc(j,r,rr)cout<<c[i][j]<<" ";cout<<endl;}
 #define debug1(c,l,r)
 #define debug2(c,l,r,ll,rr)
 #endif
+
+
 // 数论板子
 namespace arithmetical{
+    /***常用公式
+     * 欧拉定理
+     * if(__gcd(a,m)==1)
+     */
+
     // 随机数
     mt19937_64 rng(time(0));
     /**
@@ -148,25 +155,86 @@ namespace arithmetical{
         }
     }
     /**
-     * 欧拉筛
+     * 欧拉函数
+     */
+    int euler_phi(int n) {
+        int ans=n;
+        for (int i(2);i*i<=n;i++)
+        if (n%i==0) 
+        {
+            ans=ans/i*(i-1);
+            while (n%i==0)n/=i;
+        }
+        if(n>1)ans=ans/n*(n-1);
+        return ans;
+    }
+    /**
+     * 扩展欧拉定理
+     */
+    int ex_euler(int a,int k,int m)
+    {
+        int phi=euler_phi(m),g=__gcd(a,m);
+        if(g==1)return qpow(a,k%phi,m);
+        if(k<phi)return qpow(a,k,m);
+        else return qpow(a,k%phi+phi,m);
+    }
+
+    /**
+     * 预处理因数
+     * @param n 预处理的范围
+     */
+    vector<vector<int>> factors;
+    void initFactor(int n)
+    {
+        factors.assign(n+1,vector<int>(1,1));
+        inc(i,2,n)
+        {
+            for(int j(i);j<=n;j+=i)factors[j].push_back(i);
+        }
+    }
+    /**
+     * 加强欧拉筛
+     * 线性筛选
+     * 质数
+     * 最小质因子
+     * 欧拉函数
      * @param n 筛选质数最大不超过n
      */
-    vector<int> primes,pp;//质数、最小质因子
+    vector<int> primes,pp,phi;//质数、最小质因子、欧拉函数
     void initPrime(int n)
     {
+        // 筛质数初始化
         primes.clear();
+        // 筛欧拉函数初始化
+        phi.assign(n+5,0);
+        // 筛最小质因子初始化
         pp.assign(n+5,0);
         inc(i,2,n)
         {
-            if(!pp[i])primes.push_back(i);
+            if(!pp[i])
+            {
+                // 筛质数
+                primes.push_back(i);
+                // 筛欧拉函数
+                phi[i]=i-1;
+            }
             for(int tmp:primes)
             {
                 if(tmp*i>n)break;
+                // 筛最小质因子
                 pp[tmp*i]=tmp;
-                if(i%tmp==0)break;
+                // 欧拉筛线性优化
+                if(i%tmp==0)
+                {
+                    // 筛欧拉函数
+                    phi[i*tmp]=phi[i]*tmp;
+                    break;
+                }
+                phi[i*tmp]=phi[i]*phi[tmp];
             }
         }
     }
+    
     /**
      * 质因数分解欧拉筛范围内的数
      * @param a 待质因数分解的数
@@ -324,7 +392,11 @@ namespace arithmetical{
         }
         return (ans%total+total)%total;
     } 
+
 }
+
+
+
 void solve()
 {
     // P1226 快速幂
@@ -377,6 +449,12 @@ void solve()
 // 用于在程序启动前预先测试
 void test()
 {
+    arithmetical::initFactor(200);
+    inc(i,1,20)
+    {
+        cout<<"#"<<i<<endl;
+        for(int tmp:arithmetical::factors[i])cout<<tmp<<" ";cout<<endl;
+    }
 }
 signed main()
 {
